@@ -15,14 +15,15 @@ public class Neuron {
     private float delta;
     public float error;
     
-    public Neuron(IActivation activationFunction, int weightCount, int lastHiddenlayerNeuronCount) {
+    public Neuron(IActivation activationFunction, int weightCount, int lastHiddenLayerNeuronCount) {
         this.weights = new float[weightCount];
         this.activationFunction = activationFunction;
-        this.recurrentWeights = new  float[lastHiddenlayerNeuronCount];
+        this.recurrentWeights = new  float[lastHiddenLayerNeuronCount];
         
         this.delta = 0;
          
         initializeWeights();
+        initializeRecurrentWeights();
         initializeBias();
     }
     
@@ -54,6 +55,10 @@ public class Neuron {
     
     public void setWeight(int index, float weight) {
         weights[index] = weight;     
+    }
+    
+    public void setRecurrentWeight(int index, float weight) {
+        recurrentWeights[index] = weight;     
     }
             
     public float getNeuronOutput() {
@@ -98,12 +103,16 @@ public class Neuron {
     									Constants.MAX_WEIGHT) / Constants.WEIGHT_NORMALIZER;
             this.weights[i] = value;
         }  
-    	
+    		
+    }
+	
+	private void initializeRecurrentWeights(){
+
     	for (int i = 0; i < recurrentWeights.length; i++) {  		    		
         	recurrentWeights[i] = RandomGenerator.generateRandom(Constants.MIN_WEIGHT, 
     				Constants.MAX_WEIGHT) / Constants.WEIGHT_NORMALIZER;
-        }    	
-    }
+        }    
+	}
     
     private void initializeBias() {     
         this.bias = RandomGenerator.generateRandom(Constants.MIN_BIAS, 

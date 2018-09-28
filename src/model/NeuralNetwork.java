@@ -94,8 +94,18 @@ public class NeuralNetwork {
     	}
     }
     
-    public void test() {
+    public float[] predictNext() {
         feedForward();
+        int outputLayerIndex = layers.size() - 1;
+        int outputLayerNeuronCount = layers.get(outputLayerIndex).getNeuronCount();
+        
+        float[] output = new float[outputLayerNeuronCount];
+        
+        for(int i = 0; i < outputLayerNeuronCount; i++){
+        	output[i] = layers.get(outputLayerIndex).getNeurons().get(i).getActivationOutput();
+        }
+        
+        return output;
     }
     
     private void feedForward(){
@@ -152,13 +162,14 @@ public class NeuralNetwork {
     	int outputLayerIndex = layers.size() - 1;
 
         globalError = errorFunction.error(desiredOutput, layers.get(outputLayerIndex).getNeurons());
-    	
+//    	System.out.println(desiredOutput[0] + " - " + layers.get(outputLayerIndex).getNeurons().get(0).getActivationOutput());
     }
     
     private void backPropagation() {
     	
     	int outputLayerIndex = layers.size() - 1;
-    	int firstLayerIndex = 0;
+    	int firstHiddenLayerIndex = 0;
+    	int lastHiddenLayerIndex = outputLayerIndex - 1;
     	
     	for(int i = outputLayerIndex; i > -1; i--){
 
@@ -186,12 +197,21 @@ public class NeuralNetwork {
 
     			currentNeuron.setDelta(delta);   			
     			
-    			if(i == firstLayerIndex){
+    			if(i == firstHiddenLayerIndex){
+    				
+    				// BP for Normal input weights
     				for (int k = 0; k < inputs.length; k++) {
                 		float weightDiff = nu * currentNeuron.getDelta() * inputs[k];
                         float biasDiff = nu * currentNeuron.getDelta();
                         currentNeuron.setWeight(k, currentNeuron.getWeight(k) - weightDiff);
                         currentNeuron.setBias(currentNeuron.getBias() - biasDiff);
+                    }
+    				
+    				// BP for recurrent input weights
+    				for (int k = 0; k < currentNeuron.getRecurrentWeightCount(); k++) {
+                		float weightDiff = nu * currentNeuron.getDelta() 
+                					* layers.get(lastHiddenLayerIndex).getNeurons().get(k).getActivationOutput();
+                        currentNeuron.setRecurrentWeight(k, currentNeuron.getRecurrentWeight(k) - weightDiff);
                     }
     			}
     			else{

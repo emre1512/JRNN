@@ -16,21 +16,27 @@ public class Main {
 	public static void main(String[] args){
 
 		// Load data
-		List<float[]> traindata = DataLoader.loadData("C:\\Users\\user\\Documents\\AI Projects\\JANN\\traindata.txt", Seperator.COMMA);
-		List<float[]> testdata = DataLoader.loadData("C:\\Users\\user\\Documents\\AI Projects\\JANN\\testdata.txt", Seperator.COMMA);
+		List<float[]> traindata = DataLoader.loadData("C:\\Users\\user\\Documents\\AI Projects\\JRNN\\traindata.txt", Seperator.TAB);
 		
 		// Create neural network
-		NeuralNetwork nn = new NeuralNetwork(0.1f, 5E-3f, 3000000, ErrorFunction.MSE);
-		nn.addLayer(new HiddenLayer(2, ActivationFunction.LEAKED_RELU));
-		nn.addLayer(new HiddenLayer(3, ActivationFunction.LEAKED_RELU));
-		nn.addLayer(new OutputLayer(2, ActivationFunction.SIGMOID));
+		NeuralNetwork nn = new NeuralNetwork(0.1f, 5E-3f, 5, false, ErrorFunction.MSE);
+		nn.addLayer(new HiddenLayer(1, ActivationFunction.LINEAR));
+		nn.addLayer(new HiddenLayer(1, ActivationFunction.SIGMOID));
+		nn.addLayer(new OutputLayer(1, ActivationFunction.LINEAR));
 	
 		// Train and test
 		NetworkController nc = new NetworkController(nn);
-		nc.showIterations(50000);
+		nc.showIterations(5000);
 		nc.trainNetwork(traindata);	
-		nc.testNetwork(testdata);
+	//	nc.testNetwork(testdata);
+
 		
+		nc.doRegression(5);
+		
+//		for(int i = 0; i < 10; i++){
+//			nc.predictNext(new int[]{1});	
+//		}
+
 	}
 
 }
