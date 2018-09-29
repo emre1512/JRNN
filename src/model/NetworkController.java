@@ -12,6 +12,7 @@ public class NetworkController {
 	private NeuralNetwork nn;
 	private int epoch;
 	private int iteration;
+	private List<float[]> trainDataset;
 	private int iterationLogStepCount = Constants.ITERATION_LOG_STEP_COUNT;
 	
 	public NetworkController(NeuralNetwork nn){
@@ -20,6 +21,8 @@ public class NetworkController {
 	}
 	
 	public void trainNetwork(List<float[]> trainDataset){
+		
+		this.trainDataset = trainDataset;
 		
 		int sampleCount = trainDataset.size();
 		int inputCount = trainDataset.get(0).length; // Because don't have class label
@@ -48,12 +51,12 @@ public class NetworkController {
         		}
         		
         		float[] output = new float[inputCount]; 
-        		output[0] = nextSample[0];
-        		
+
+        		for(int j = 0; j < inputCount; j++){            		
+        			output[j] = nextSample[j];
+        		}
+        		     		
         		nn.setInputs(inputs);
-        		
-        		//int classLabel = (int)sample[classLabelIndex];
-        		//nn.setDesiredOutput(ClassLabelToArray.convert(classLabel, nn.getLayers().get(nn.getLayers().size()-1).getNeuronCount()));
         		
         		nn.setDesiredOutput(output);
         		
@@ -71,85 +74,54 @@ public class NetworkController {
 		
 		Logger.getInstance().showTrainingEndMessage(iteration, nn.getGlobalError());
 	}
-	
-//	public void testNetwork(List<float[]> testDataset){
-//      
-//		Logger.getInstance().showTestStartMessage();
-//	       
-//		int sampleCount = testDataset.size();
-//		int inputCount = testDataset.get(0).length - 1;
-//		int classLabelIndex = testDataset.get(0).length - 1;		
-//		int outputLayerIndex = nn.getLayers().size() - 1;
-//		
-//		float[] nnOutput = new float[nn.getLayers().get(outputLayerIndex).getNeuronCount()];
-//		
-//	    for(int i = 0; i < sampleCount; i++){
-//    		
-//    		float[] sample = testDataset.get(i);
-//    		
-//    		float[] inputs = new float[inputCount];
-//    		
-//    		for(int j = 0; j < inputCount; j++){            		
-//        		inputs[j] = sample[j];
-//    		}
-//    		
-//    		nn.setInputs(inputs);
-//    		
-//    		int classLabel = (int)sample[classLabelIndex];
-//    		nn.setDesiredOutput(ClassLabelToArray.convert(classLabel, nn.getLayers().get(nn.getLayers().size()-1).getNeuronCount()));
-//    		
-//    		nn.test();    	   		    		
-//    		
-//    		
-//    		for(int j = 0; j < nn.getLayers().get(outputLayerIndex).getNeuronCount(); j++){
-//    			nnOutput[j] = nn.getLayers().get(outputLayerIndex).getNeurons().get(j).getActivationOutput();
-//    		}
-//    		
-//			int predictedClass = ArrayToClassLabel.convert(nnOutput);
-//			int realClass = (int)sample[classLabelIndex];
-//    		
-//			SuccessCalculator.addResult(predictedClass, realClass);
-//			
-//    		Logger.getInstance().showTestCaseResult(inputs, predictedClass, realClass);
-//			
-//    	}
-//	    	
-//	    float successRate = SuccessCalculator.getSuccessRate(sampleCount);
-//	    
-//	    Logger.getInstance().showTestEndMessage(successRate);
-//	    
-//	}  
-	
+		
 	public void doRegression(int stepCount){
+		
+		// TODO: Regression start message log
 		
 		int outputLayerIndex = nn.getLayers().size() - 1;
 		int outputLayerNeuronCount = nn.getLayers().get(outputLayerIndex).getNeuronCount();
 		
-		float[] prevOutput = new float[outputLayerNeuronCount];
+		float[] prevOutput = trainDataset.get(trainDataset.size()-1);
 		float[] nextOutput = new float[outputLayerNeuronCount];
 		
-		for(int i = 0; i < stepCount; i++){			
-			for(int j = 0; j < outputLayerNeuronCount; j++){
-				prevOutput[j] = nn.getLayers().get(outputLayerIndex).getNeurons().get(j).getActivationOutput();
-				nn.setInputs(prevOutput);
-				nextOutput = nn.predictNext();
-				
-				for(int k = 0; k < outputLayerNeuronCount; k++){
-					System.out.print(nextOutput[k] + " - ");
-				}
-
+		for(int i = 0; i < stepCount; i++){						
+			nn.setInputs(prevOutput);
+			nextOutput = nn.predictNext();
+			
+			for(int k = 0; k < nextOutput.length; k++){
+				System.out.print(nextOutput[k] + " - ");
 			}
-		}
-	
+			
+			System.out.println();
+			
+			prevOutput = nextOutput;
+		}	
 	}
 	
-//	public void predictNext(float[] input){
-//		nn.setInputs(vector);
-//	}
-//	
-//	public void predictNext(int[] vector){
-//		
-//	}
+	public void predictNext(float[] input, int stepCount){
+		
+		// TODO: Prediction start message log
+		
+		int outputLayerIndex = nn.getLayers().size() - 1;
+		int outputLayerNeuronCount = nn.getLayers().get(outputLayerIndex).getNeuronCount();
+		
+		float[] prevOutput = input;		
+		float[] nextOutput = new float[outputLayerNeuronCount];
+		
+		for(int i = 0; i < stepCount; i++){						
+			nn.setInputs(prevOutput);
+			nextOutput = nn.predictNext();
+			
+			for(int k = 0; k < nextOutput.length; k++){
+				System.out.print(nextOutput[k] + " - ");
+			}
+			
+			System.out.println();
+			
+			prevOutput = nextOutput;
+		}
+	}
 	
 	public void showIterations(int iterationLogStepCount){
 		this.iterationLogStepCount = iterationLogStepCount;

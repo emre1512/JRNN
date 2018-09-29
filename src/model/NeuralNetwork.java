@@ -20,16 +20,16 @@ public class NeuralNetwork {
     private boolean hasHiddenLayer = false;
     private float globalError;
     private IError errorFunction;
-    private boolean isNumeric = false;
+    private boolean isBinary = false;
 
     
-    public NeuralNetwork(float nu, float desiredError, int epoch, boolean isnumeric,
+    public NeuralNetwork(float nu, float desiredError, int epoch, boolean isBinary,
     					ErrorFunction errorFunction){
         this.nu = nu;
         this.desiredError = desiredError;       
         this.epoch = epoch;
         this.layers = new ArrayList<>();
-        this.isNumeric = isNumeric;
+        this.isBinary = isBinary;
 
         if(errorFunction == ErrorFunction.MSE){
             this.errorFunction = new MeanSquaredError();
@@ -139,7 +139,7 @@ public class NeuralNetwork {
 	    		if(i == firstHiddenLayerIndex){
 	    			Layer lastHiddenLayer = layers.get(lastHiddenLayerIndex);
 	    			for(int k = 0; k < currentNeuron.getRecurrentWeightCount(); k++){
-		    			
+//		    			System.out.println(currentNeuron.getRecurrentWeight(k) );
 		    			totalInput += lastHiddenLayer.getNeurons().get(k).getActivationOutput() 
 		    												* currentNeuron.getRecurrentWeight(k);	    			
 		    		}	
@@ -235,6 +235,10 @@ public class NeuralNetwork {
         
     }
     	
+    public boolean isBinary() {
+		return isBinary;
+	}
+    
     public float getGlobalError() {
         return this.globalError;
     }

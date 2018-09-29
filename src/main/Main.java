@@ -16,26 +16,24 @@ public class Main {
 	public static void main(String[] args){
 
 		// Load data
-		List<float[]> traindata = DataLoader.loadData("C:\\Users\\user\\Documents\\AI Projects\\JRNN\\traindata.txt", Seperator.TAB);
+		List<float[]> traindata = DataLoader.loadData("C:\\Users\\user\\Documents\\AI Projects\\JRNN\\traindata.txt", Seperator.COMMA);
 		
 		// Create neural network
-		NeuralNetwork nn = new NeuralNetwork(0.1f, 5E-3f, 5, false, ErrorFunction.MSE);
-		nn.addLayer(new HiddenLayer(1, ActivationFunction.LINEAR));
-		nn.addLayer(new HiddenLayer(1, ActivationFunction.SIGMOID));
-		nn.addLayer(new OutputLayer(1, ActivationFunction.LINEAR));
+		NeuralNetwork nn = new NeuralNetwork(0.3f, 1E-3f, 3000000, false, ErrorFunction.MSE);
+		nn.addLayer(new HiddenLayer(2, ActivationFunction.TANH));
+		nn.addLayer(new OutputLayer(3, ActivationFunction.SIGMOID)); // Neuron count must be same with the input vector length
 	
 		// Train and test
 		NetworkController nc = new NetworkController(nn);
-		nc.showIterations(5000);
+		nc.showIterations(20000);
 		nc.trainNetwork(traindata);	
-	//	nc.testNetwork(testdata);
-
 		
-		nc.doRegression(5);
+		// Do regression for 6 steps, starting from the last input
+		nc.doRegression(6);
 		
-//		for(int i = 0; i < 10; i++){
-//			nc.predictNext(new int[]{1});	
-//		}
+		// Predict next 6 output with the given input
+		nc.predictNext(new float[]{0, 0, 1}, 6); 
+		
 
 	}
 
