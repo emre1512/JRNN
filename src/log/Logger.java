@@ -1,5 +1,7 @@
 package log;
 
+import java.util.List;
+
 public class Logger implements LogMessages{
 
 	private static Logger instance;
@@ -47,38 +49,48 @@ public class Logger implements LogMessages{
 	}
 
 	@Override
-	public void showTestStartMessage() {
-		System.out.println("========= Test Starts =========");	
-	}
-	
-	@Override
-	public void showTestCaseResult(float[] input, float predictedClass, float desiredOutput) {
-		System.out.print("Input: |");
-		for(int i = 0; i < input.length; i++){			
-			System.out.printf("%.2f", input[i]);
-			System.out.print(" ");
-		}
-		
-		System.out.print("| Result: ");
-		System.out.print((int)predictedClass + " |");
-		System.out.print(" Real Result: " + (int)desiredOutput);
-		System.out.println();
-	}
-
-	@Override
-	public void showTestEndMessage(float success) {
-		System.out.println();
-		System.out.println("========== Test Ends ==========");
-		System.out.println("Success: %" + success);
-	}
-
-	@Override
 	public void showIterationStats(int iteration, float error) {
 		System.out.println();
 		System.out.println("===============================");
         System.out.println("Current iteration :" + iteration);
         System.out.println("Current error     :" + error);
 		System.out.println("===============================");
+	}
+
+	@Override
+	public void showRegressionResults(List<float[]> predictions) {
+		System.out.println("======= Regression Starts =======");	
+		
+		for(int i = 0; i < predictions.size(); i++){
+			for(int j = 0; j < predictions.get(0).length; j++){
+				System.out.print(predictions.get(i)[j] + "	");
+			}
+			System.out.println();
+		}
+		
+		System.out.println("====== Regression Finished ======");
+		System.out.println();		
+	}
+
+	@Override
+	public void showPredictionResults(List<float[]> predictions) {
+		System.out.println("======= Prediction Starts =======");	
+		
+		for(int i = 0; i < predictions.size(); i++){
+			for(int j = 0; j < predictions.get(0).length; j++){
+				System.out.print(predictions.get(i)[j] + "	");
+			}
+			System.out.println();
+		}		
+		
+		System.out.println("====== Prediction Finished ======");
+		System.out.println();	
+	}
+
+	@Override
+	public void showNoHiddenLayerError() {
+		System.out.println("No hidden layer! Please add at least one hidden layer.");
+		System.out.println();		
 	}
 
 

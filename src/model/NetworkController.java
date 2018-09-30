@@ -1,10 +1,10 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 import constant.Constants;
 import log.Logger;
-import util.ArrayToClassLabel;
-import util.ClassLabelToArray;
+import util.ResultQuantizer;
 import util.SuccessCalculator;
 
 public class NetworkController {
@@ -76,52 +76,117 @@ public class NetworkController {
 	}
 		
 	public void doRegression(int stepCount){
-		
-		// TODO: Regression start message log
+
+		List<float[]> predictions = new ArrayList<>();
 		
 		int outputLayerIndex = nn.getLayers().size() - 1;
 		int outputLayerNeuronCount = nn.getLayers().get(outputLayerIndex).getNeuronCount();
 		
-		float[] prevOutput = trainDataset.get(trainDataset.size()-1);
-		float[] nextOutput = new float[outputLayerNeuronCount];
+		float[] nextInput = trainDataset.get(trainDataset.size()-1);
+		float[] predictedOutput = new float[outputLayerNeuronCount];
 		
 		for(int i = 0; i < stepCount; i++){						
-			nn.setInputs(prevOutput);
-			nextOutput = nn.predictNext();
+			nn.setInputs(nextInput);
+			predictedOutput = nn.predictNext();
+
+			predictions.add(predictedOutput);
 			
-			for(int k = 0; k < nextOutput.length; k++){
-				System.out.print(nextOutput[k] + " - ");
-			}
-			
-			System.out.println();
-			
-			prevOutput = nextOutput;
+			nextInput = predictedOutput;
 		}	
+		
+
+		if(nn.isBinary()){
+			for(int i = 0; i < predictions.size(); i++){
+				for(int j = 0; j < predictedOutput.length; j++){
+					predictions.get(i)[j] = ResultQuantizer.quantizeResult(predictions.get(i)[j]);
+				}
+			}
+		}
+				
+		Logger.getInstance().showRegressionResults(predictions);
 	}
 	
-	public void predictNext(float[] input, int stepCount){
+	public void predictNext(List<float[]> inputSequence, int stepCount){
 		
-		// TODO: Prediction start message log
+		List<float[]> predictions = new ArrayList<>();
 		
 		int outputLayerIndex = nn.getLayers().size() - 1;
 		int outputLayerNeuronCount = nn.getLayers().get(outputLayerIndex).getNeuronCount();
 		
-		float[] prevOutput = input;		
-		float[] nextOutput = new float[outputLayerNeuronCount];
+		float[] predictedOutput = new float[outputLayerNeuronCount];
 		
-		for(int i = 0; i < stepCount; i++){						
-			nn.setInputs(prevOutput);
-			nextOutput = nn.predictNext();
-			
-			for(int k = 0; k < nextOutput.length; k++){
-				System.out.print(nextOutput[k] + " - ");
-			}
-			
-			System.out.println();
-			
-			prevOutput = nextOutput;
+		// Use input sequence
+		for(int i = 0; i < inputSequence.size(); i++){
+			nn.setInputs(inputSequence.get(i));
+			predictedOutput = nn.predictNext(); // We ignore the predictions, only the last prediction is important.
 		}
+		
+		predictions.add(predictedOutput);	
+				
+		float[] nextInput = new float[outputLayerNeuronCount];
+		
+		for(int i = 0; i < stepCount - 1; i++){						
+			nn.setInputs(nextInput);
+			predictedOutput = nn.predictNext();
+					
+			predictions.add(predictedOutput);
+			
+			nextInput = predictedOutput;
+		}
+		
+		if(nn.isBinary()){
+			if(nn.isBinary()){
+				for(int i = 0; i < predictions.size(); i++){
+					for(int j = 0; j < predictedOutput.length; j++){
+						predictions.get(i)[j] = ResultQuantizer.quantizeResult(predictions.get(i)[j]);
+					}
+				}
+			}
+		}
+		
+		Logger.getInstance().showPredictionResults(predictions);
+				
 	}
+	
+//	public void predictNext(float[] input, int stepCount){
+//		
+//		// TODO: Prediction start message log
+//		
+//		List<float[]> predictions = new ArrayList<>();
+//		
+//		int outputLayerIndex = nn.getLayers().size() - 1;
+//		int outputLayerNeuronCount = nn.getLayers().get(outputLayerIndex).getNeuronCount();
+//		
+//		float[] predictedOutput = new float[outputLayerNeuronCount];		
+//		float[] nextInput = input;		
+//		
+//		for(int i = 0; i < stepCount; i++){						
+//			nn.setInputs(nextInput);
+//			predictedOutput = nn.predictNext();
+//						
+//			predictions.add(predictedOutput);
+//			
+//			nextInput = predictedOutput;
+//		}
+//		
+//		if(nn.isBinary()){
+//			if(nn.isBinary()){
+//				for(int i = 0; i < predictions.size(); i++){
+//					for(int j = 0; j < predictedOutput.length; j++){
+//						predictions.get(i)[j] = ResultQuantizer.quantizeResult(predictions.get(i)[j]);
+//					}
+//				}
+//			}
+//		}
+//		
+//		for(int i = 0; i < predictions.size(); i++){
+//			for(int j = 0; j < predictions.get(0).length; j++){
+//				System.out.print(predictions.get(i)[j] + " - ");
+//			}
+//			System.out.println();
+//		}
+//		
+//	}
 	
 	public void showIterations(int iterationLogStepCount){
 		this.iterationLogStepCount = iterationLogStepCount;
@@ -140,7 +205,6 @@ public class NetworkController {
 			if(i == firstHiddenLayerIndex){
 				for(int j = 0; j < layer.getNeuronCount(); j++){
 					int lastHiddenLayerNeuronCount = nn.getLayers().get(lastHiddenLayerIndex).getNeuronCount();
-					System.out.println(lastHiddenLayerNeuronCount);
 					Neuron neuron = new Neuron(layer.getActivationFunction(), inputCount, lastHiddenLayerNeuronCount);				
 					layer.addNeuron(neuron);
 				}

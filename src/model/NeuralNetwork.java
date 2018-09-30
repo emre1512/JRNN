@@ -85,7 +85,7 @@ public class NeuralNetwork {
     		Logger.getInstance().showNoOutputLayerError();
     	}
     	else if(!hasHiddenLayer){
-    		// TODO: Log: No hidden layer!
+    		Logger.getInstance().showNoHiddenLayerError();
     	}
     	else{
             feedForward();
@@ -248,7 +248,7 @@ public class NeuralNetwork {
     }
      
     public boolean hasLearnt() {
-        return (globalError < desiredError);
+        return (globalError <= desiredError);
     }
 
 }
