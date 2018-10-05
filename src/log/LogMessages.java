@@ -11,5 +11,6 @@ public interface LogMessages {
 	public void showIterationStats(int iteration, float error);
 	public void showRegressionResults(List<float[]> predictions);
 	public void showPredictionResults(List<float[]> predictions);
+	public void showOutputNeuronCountMustBeSameWithInputVectorLengthError(int outputNeuronCount, int inputVectorLength);
 	
 }

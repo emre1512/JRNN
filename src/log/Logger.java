@@ -17,17 +17,9 @@ public class Logger implements LogMessages{
 	
 	@Override
 	public void showNoOutputLayerError() {
-		System.out.println("No output layer! Please add an output layer.");
+		System.err.println("No output layer! Please add an output layer.");
 		System.out.println();
 	}
-
-//	@Override
-//	public void showInitMessage(int hiddenLayerCount, int classCount, float learningRate) {
-//		System.out.println("Network has been initiated with:" + hiddenLayerCount + " hidden layers, " +
-//							);
-//		System.out.println("                                ");
-//		
-//	}
 
 	@Override
 	public void showTrainingStartMessage(int epoch, float maxError, float learningRate) {
@@ -63,7 +55,7 @@ public class Logger implements LogMessages{
 		
 		for(int i = 0; i < predictions.size(); i++){
 			for(int j = 0; j < predictions.get(0).length; j++){
-				System.out.print(predictions.get(i)[j] + "	");
+				System.out.print((int)predictions.get(i)[j] + "	");
 			}
 			System.out.println();
 		}
@@ -89,8 +81,17 @@ public class Logger implements LogMessages{
 
 	@Override
 	public void showNoHiddenLayerError() {
-		System.out.println("No hidden layer! Please add at least one hidden layer.");
+		System.err.println("No hidden layer! Please add at least one hidden layer.");
 		System.out.println();		
+	}
+
+	@Override
+	public void showOutputNeuronCountMustBeSameWithInputVectorLengthError(int outputNeuronCount, int inputVectorLength) {
+		System.err.println("Output neuron count (" + outputNeuronCount + ") "
+				+ "must be same with input vector length (" + inputVectorLength + ")");
+		System.err.println("Training is stopped.");
+		System.out.println();
+
 	}
 
 

@@ -9,8 +9,8 @@ public class ReluActivation implements IActivation{
 
 	@Override
 	public float derivative(float input) {
-		if (input <= 0) return 0;
-		else return 1;
+		if (input <= 0) return 0f;
+		else return 1.0f;
 	}
 
 }

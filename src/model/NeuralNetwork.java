@@ -87,15 +87,16 @@ public class NeuralNetwork {
     	else if(!hasHiddenLayer){
     		Logger.getInstance().showNoHiddenLayerError();
     	}
-    	else{
-            feedForward();
+    	else{   
+            feedForward();            
             calculateError();
             backPropagation();
     	}
     }
     
-    public float[] predictNext() {
-        feedForward();
+    public float[] predictNext() { 	
+		feedForward();
+
         int outputLayerIndex = layers.size() - 1;
         int outputLayerNeuronCount = layers.get(outputLayerIndex).getNeuronCount();
         
@@ -105,7 +106,7 @@ public class NeuralNetwork {
         	output[i] = layers.get(outputLayerIndex).getNeurons().get(i).getActivationOutput();
         }
         
-        return output;
+        return output; 	
     }
     
     private void feedForward(){
