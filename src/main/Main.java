@@ -24,7 +24,7 @@ public class Main {
 		nn.addLayer(new HiddenLayer(2, ActivationFunction.SIGMOID));
 //		nn.addLayer(new HiddenLayer(1, ActivationFunction.LEAKED_RELU));
 //		nn.addLayer(new HiddenLayer(1, ActivationFunction.SIGMOID));
-		nn.addLayer(new OutputLayer(4, ActivationFunction.SIGMOID)); // Neuron count must be same with the input vector length
+		nn.addLayer(new OutputLayer(3, ActivationFunction.SIGMOID)); // Neuron count must be same with the input vector length
 	
 		// Train and test
 		NetworkController nc = new NetworkController(nn);
@@ -37,15 +37,15 @@ public class Main {
 		// OR
 		
 		// Predict next 6 output for the given input sequence
-		List<float[]> inputSequence = new ArrayList<>();
-		inputSequence.add(new float[]{0, 0, 1});
-		inputSequence.add(new float[]{0, 1, 0});
-		inputSequence.add(new float[]{0, 1, 1});
-		inputSequence.add(new float[]{0, 0, 1});
-		inputSequence.add(new float[]{0, 1, 0});
-		inputSequence.add(new float[]{0, 1, 1});
-		
-		nc.predictNext(inputSequence, 6); 
+//		List<float[]> inputSequence = new ArrayList<>();
+//		inputSequence.add(new float[]{0, 0, 1});
+//		inputSequence.add(new float[]{0, 1, 0});
+//		inputSequence.add(new float[]{0, 1, 1});
+//		inputSequence.add(new float[]{0, 0, 1});
+//		inputSequence.add(new float[]{0, 1, 0});
+//		inputSequence.add(new float[]{0, 1, 1});
+//		
+//		nc.predictNext(inputSequence, 6); 
 		
 	}
 
